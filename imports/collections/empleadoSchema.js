@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 
-const usuarioSchema = new mongoose.Schema({
+const empleadoSchema = new mongoose.Schema({
     tipoIdentificacion:{
         type: String,
         require: true,
@@ -67,6 +67,6 @@ const usuarioSchema = new mongoose.Schema({
     }
 });
 
-const Usuario = mongoose.model("Empleado", usuarioSchema);
+const Empleado = mongoose.model("Empleado", empleadoSchema);
 
-module.exports = Usuario
+module.exports = Empleado

@@ -1,5 +1,4 @@
- 
-// Requires de paquetes-modulos instalados mediante npm
+ // Requires de paquetes-modulos instalados mediante npm
 const express = require("express")
 const bodyParser = require("body-parser")
 
@@ -7,7 +6,8 @@ const bodyParser = require("body-parser")
 // Requires de modulos diseñados por los desarrolladores
 require('../imports/configurations/db-connection');
 const rutasVacunas = require("../imports/api/vacunas/rutasVacunas");
-const rutasTrabajador = require("../imports/api/trabajadores/rutasUsuarios");
+const rutasEmpleados = require("../imports/api/empleados/rutasEmpleados");
+const rutasLogin = require("../imports/api/login/rutasLogin");
 
 
 // Inicia el servidor de express
@@ -29,7 +29,8 @@ app.use(bodyParser.urlencoded({extended: true}));
 // ---- RUTAS ------//
 // Las rutas deben estar separadas en la correspondiente carpeta Rutas para facil mantenibilidad.
 app.use("/vacunas", rutasVacunas);
-app.use("/trabajador", rutasTrabajador);
+app.use("/empleados", rutasEmpleados);
+app.use("/login", rutasLogin);
 
 // Ruta a la pagina de inicio.
 //app.get("/", (req,res) =>{

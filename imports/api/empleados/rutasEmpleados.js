@@ -4,44 +4,51 @@ const cors = require('cors');
 const router = express.Router();
 router.use(cors());
 
-const Usuario = require("../../collections/usuarioSchema");
-
+const Empleado = require("../../collections/empleadoSchema");
 const Vacuna = require("../../collections/vacunaSchema");
 
-
+// Obtener empleados
 router.get("/", (req,res)=>{
-    console.log(Vacuna.find({}))
-    Vacuna.find({},(err, resultado)=>{
-        if (err) res.send([])
-        else {
-            res.json(resultado)
-        }
+
+    Empleado.find({}).
+    then(empleadosRetornados =>{
+        res.json({error: false, datos: empleadosRetornados});
     })
+    .catch(err =>{
+        res.send("Error: " + err);
+    })
+
 })
 
 //Por orden las funciones deberian ir en otro lugar pero esta se queda aqui ya que es solo una.
-let encontrarVacunas = (arregloVacunas) => { 
-    let arregloVacuna = []
-    for (idVacunaActual of arregloVacunas){
-        Vacuna.findOne({_id: idVacunaActual},(err, resultado) => {
-            if (err){
-                console.log("Hubo un error")
-                return "";
-            }
-            arregloVacuna.push(resultado);
+let encontrarVacunas = (arregloVacunasEnviado) => { 
+
+    let arregloVacunas = []
+    for (idVacunaActual of arregloVacunasEnviado){
+        Vacuna.findOne({_id: idVacunaActual})
+        .then(vacunaEncontrada =>{
+            arregloVacunas.push(vacunaEncontrada)
+        })
+        .catch(err =>{
+            return [];
+
         })
     }
-    return arregloVacuna;
+    return arregloVacunas;
+
 }
 
-
+// Agregar empleados
 router.post("/", (req,res) =>{
+
     let area;
+
     if (req.body.tipoTrabajador){
         area = "Empleado salud"
     }else{
         area = "Empleado normal"
     }
+    
     const usuario = new Usuario({
         tipoIdentificacion : req.body.tipoDocumento,
         identificacion : req.body.documento,
@@ -57,15 +64,18 @@ router.post("/", (req,res) =>{
         areaTrabajo : area,
         //registradoPor : req.body.registradoPor,
         detallesVacunacion : encontrarVacunas(req.body.detallesVacunacion)
-    }, (err) =>{
-        if (err) {
-            res.json({status: false});
-        }
+    }, (err) => {
+        if (err) res.json({error: true, mensaje: "Ya existe un usuario con esa informacion"});
     })
-    usuario.save((err) => {
-        if (err) res.json({status: false});
-        res.json({status: true})
+
+    usuario.save().
+    then(exito => {
+        res.json({error: false, mensaje: "Se guardo el empleado correctamente"})
     })
+    .catch(err =>{
+        res.send("Error: " + err)
+    });
+
 });
 
 
