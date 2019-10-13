@@ -4,43 +4,23 @@ const cors = require('cors');
 const router = express.Router();
 router.use(cors());
 
-
 const Vacuna = require("../../collections/vacunaSchema");
 
+// Obtener vacunas
+router.get('/',(req,res) => {
 
-router.get('/', async (req,res) => {
-    const vacunas = await Vacuna.find();
-    res.json(vacunas);
-})
-
-
-router.post("/registro", (req,res)=>{
-    const datosVacuna = {
-        nombre: req.body.nombre,
-        descripcion: req.body.descripcion,
-        periodicidad: req.body.periodicidad,
-        cantidadAplicar: req.body.cantidadAplicar,
-        prestadorServicio : req.body.prestadorServicio
-    }
-
-    Vacuna.findOne({
-        nombre : req.body.nombre
-    }).then(router => {
-        if(!router){
-            Vacuna.create(datosVacuna).then(router => {
-                res.json({status: true})
-            }).catch(err => {
-                res.send('error: ' + err)
-            })
-        }else{
-            res.json({ status: false})
-        }
-    }).catch(err => {
-        res.send('error: ' + err)
+    Vacuna.find({}).
+    then(vacunasRetornadas =>{
+        res.json({error: false, datos: vacunasRetornadas});
+    })
+    .catch(err =>{
+        res.json("Error: " + err);
     })
 })
 
-/*router.post("/registro", (req,res) =>{
+// Agregar vacunas
+router.post("/", (req,res)=>{
+
     const nuevaVacuna = new Vacuna({
         nombre: req.body.nombre,
         descripcion: req.body.descripcion,
@@ -48,14 +28,22 @@ router.post("/registro", (req,res)=>{
         cantidadAplicar: req.body.cantidadAplicar,
         prestadorServicio : req.body.prestadorServicio
     });
-    nuevaVacuna.save((err) =>{
-        if (err) console.log("Error al conectarse a la base de datos")
-        return;
+
+    Vacuna.findOne({nombre : req.body.nombre}).
+    then(vacunaEncontrada => {
+        if(!vacunaEncontrada){
+            nuevaVacuna.save()
+            .then(exito => {
+                res.json({error: false, mensaje: "Vacuna guardada correctamente"})
+            }).catch(err => {
+                res.send('Error: ' + err)
+            })
+        }else{
+            res.json({error: true, mensaje: "Ya existe esa vacuna en la base de datos"})
+        }
+    }).catch(err => {
+        res.send('Error: ' + err)
     })
-    res.json({
-        status: 'Task has been saved'
-    });
-   // res.send("Bienvenido a la pagina de vacunas")
-})*/
+})
 
 module.exports = router;

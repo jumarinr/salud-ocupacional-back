@@ -1,5 +1,4 @@
- 
-const mongoose = require("mongoose")
+ const mongoose = require("mongoose")
 
 // Conexion a la base de datos. (Se puede mejorar en un futuro capturando y tratando el error de una mejor manera)
 
