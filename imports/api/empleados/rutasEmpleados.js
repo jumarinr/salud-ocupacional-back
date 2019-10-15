@@ -49,7 +49,7 @@ router.post("/", (req,res) =>{
         area = "Empleado normal"
     }
     
-    const usuario = new Usuario({
+    const usuario = new Empleado({
         tipoIdentificacion : req.body.tipoDocumento,
         identificacion : req.body.documento,
         correo : req.body.correo,
