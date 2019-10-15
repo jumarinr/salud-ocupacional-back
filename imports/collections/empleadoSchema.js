@@ -27,9 +27,7 @@ const empleadoSchema = new mongoose.Schema({
     },
     fechaNacimiento:{
         type: Date,
-        require: true,
-        min: Date(1939,01,01),
-        max: Date(2000,12,29)
+        require: true
     },
     direccion:{
         type: String,
