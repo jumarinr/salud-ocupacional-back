@@ -53,7 +53,7 @@ router.post("/", (req,res) =>{
         tipoIdentificacion : req.body.tipoDocumento,
         identificacion : req.body.documento,
         correo : req.body.correo,
-        nombre : req.body.nombres,
+        nombres : req.body.nombres,
         apellidos : req.body.apellidos,
         fechaNacimiento : req.body.fechaNacimiento,
         direccion : req.body.direccion,
