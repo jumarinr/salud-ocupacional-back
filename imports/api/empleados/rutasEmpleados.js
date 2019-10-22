@@ -15,12 +15,13 @@ router.get("/", (req,res)=>{
         res.json({error: false, datos: empleadosRetornados});
     })
     .catch(err =>{
-        res.send("Error: " + err);
+        res.json({error: true, mensaje: "Error al buscar empleados", datos: err})
     })
 
 })
 
 //Por orden las funciones deberian ir en otro lugar pero esta se queda aqui ya que es solo una.
+// por el momento se descarta la función y se guarda un array de _ids
 let encontrarVacunas = (arregloVacunasEnviado) => { 
 
     let arregloVacunas = []
@@ -63,7 +64,7 @@ router.post("/", (req,res) =>{
         nivelRiesgoLaboral : req.body.nivelRiesgo,
         areaTrabajo : area,
         //registradoPor : req.body.registradoPor,
-        detallesVacunacion : encontrarVacunas(req.body.detallesVacunacion)
+        detallesVacunacion : req.body.detallesVacunacion
     }, (err) => {
         if (err) res.json({error: true, mensaje: "Ya existe un usuario con esa informacion"});
     })
@@ -73,7 +74,7 @@ router.post("/", (req,res) =>{
         res.json({error: false, mensaje: "Se guardo el empleado correctamente"})
     })
     .catch(err =>{
-        res.send("Error: " + err)
+        res.json({error: true, mensaje: "Error al crear el empleado", datos: err})
     });
 
 });
