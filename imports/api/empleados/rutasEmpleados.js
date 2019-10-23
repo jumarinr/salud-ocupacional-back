@@ -49,7 +49,7 @@ let encontrarVacunas = (arregloVacunasEnviado) => {
         })
     }
     return arregloVacunas;
-
+    
 }
 
 // Agregar empleados
