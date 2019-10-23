@@ -80,9 +80,10 @@ router.post("/", (req,res) =>{
 });
 
 //Eliminar empleados
-router.post("/eliminarEmp", async (req, res) => {
-    await Trabajador.findOneAndRemove({identificacion: req.body.identificacion}).then(trabajador => {
-        if (trabajador) {
+router.delete("/:id", (req, res) => {
+    let empleadoId = req.params.id;
+    Empleado.findByIdAndRemove(empleadoId).then(trabajador => {
+        if(trabajador) {
             res.json({error: false, mensaje: "Se eliminó al empleado correctamente"})
         } else {
             res.json({error: true, mensaje: "No se pudo eliminar al empleado"})
