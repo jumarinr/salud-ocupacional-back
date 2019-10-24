@@ -34,7 +34,7 @@
 # BACK-END:
 
 **Dev-Ops**
- Marin Rodriguez, Juan Diego (jumarinr@unal.edu.co)
+ Marin Rodriguez,  Juan Diego (jumarinr@unal.edu.co)
 
 **DB**
  Capdet Martínez, Nicolás (ncapdetm@unal.edu.co)
