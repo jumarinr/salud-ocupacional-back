@@ -37,19 +37,13 @@ router.get("/:id", (req,res) =>{
 // por el momento se descarta la función y se guarda un array de _ids
 let encontrarVacunas = (arregloVacunasEnviado) => { 
 
-    let arregloVacunas = []
+    let arregloPromesas = []
     for (idVacunaActual of arregloVacunasEnviado){
-        Vacuna.findOne({_id: idVacunaActual})
-        .then(vacunaEncontrada =>{
-            arregloVacunas.push(vacunaEncontrada)
-        })
-        .catch(err =>{
-            return [];
-
-        })
+        arregloPromesas.push(Vacuna.findOne({_id: idVacunaActual},{_id:1,cantidadAplicar:1}).exec())
     }
-    return arregloVacunas;
-    
+
+    return(Promise.all(arregloPromesas))
+
 }
 
 // Agregar empleados
@@ -62,34 +56,39 @@ router.post("/", (req,res) =>{
     }else{
         area = "Empleado normal"
     }
-    
-    const usuario = new Empleado({
-        tipoIdentificacion : req.body.tipoDocumento,
-        identificacion : req.body.documento,
-        correo : req.body.correo,
-        nombres : req.body.nombres,
-        apellidos : req.body.apellidos,
-        fechaNacimiento : req.body.fechaNacimiento,
-        direccion : req.body.direccion,
-        telefono : req.body.telefono,
-        celular : req.body.celular,
-        contactoAllegado : req.body.telefonoFamiliar,
-        nivelRiesgoLaboral : req.body.nivelRiesgo,
-        areaTrabajo : area,
-        //registradoPor : req.body.registradoPor,
-        detallesVacunacion : req.body.detallesVacunacion
-    }, (err) => {
-        if (err) res.json({error: true, mensaje: "Ya existe un usuario con esa informacion"});
-    })
 
-    usuario.save().
-    then(exito => {
-        res.json({error: false, mensaje: "Se guardo el empleado correctamente"})
+    let vacunasGuardar  = encontrarVacunas(req.body.detallesVacunacion);
+    vacunasGuardar.then(arregloRetornado =>{
+        const usuario = new Empleado({
+            tipoIdentificacion : req.body.tipoDocumento,
+            identificacion : req.body.documento,
+            correo : req.body.correo,
+            nombres : req.body.nombres,
+            apellidos : req.body.apellidos,
+            fechaNacimiento : req.body.fechaNacimiento,
+            direccion : req.body.direccion,
+            telefono : req.body.telefono,
+            celular : req.body.celular,
+            contactoAllegado : req.body.telefonoFamiliar,
+            nivelRiesgoLaboral : req.body.nivelRiesgo,
+            areaTrabajo : area,
+            //registradoPor : req.body.registradoPor,
+            detallesVacunacion : arregloRetornado
+        }, (err) => {
+            if (err) res.json({error: true, mensaje: "Ya existe un usuario con esa informacion"});
+        })
+    
+        usuario.save().
+        then(exito => {
+            res.json({error: false, mensaje: "Se guardo el empleado correctamente"})
+        })
+        .catch(err =>{
+            res.json({error: true, mensaje: "Error al crear el empleado", datos: err})
+        });      
     })
     .catch(err =>{
         res.json({error: true, mensaje: "Error al crear el empleado", datos: err})
-    });
-
+    })
 });
 
 //Actualizar empleado
@@ -125,7 +124,6 @@ router.put("/:id", (req,res) =>{
     })
 
 })
-
 
 //Eliminar empleados
 router.post("/eliminarEmp", async (req, res) => {
