@@ -1,6 +1,7 @@
  // Requires de paquetes-modulos instalados mediante npm
 const express = require("express")
 const bodyParser = require("body-parser")
+const session = require('express-session')
 
 
 // Requires de modulos diseñados por los desarrolladores
@@ -24,13 +25,20 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: true}));
 
 
-// TODO: Incluir el login en el index.js
+// Pemite user la session en los req de las rutas
+app.use(session({
+  resave: true,
+  saveUninitialized: true,
+  secret: "La cerda esta en la pocilga" // Importante para que la session tenga un hash unico basado en este string
+}))
+
 
 // ---- RUTAS ------//
 // Las rutas deben estar separadas en la correspondiente carpeta Rutas para facil mantenibilidad.
 app.use("/vacunas", rutasVacunas);
 app.use("/empleados", rutasEmpleados);
 app.use("/login", rutasLogin);
+
 
 // Ruta a la pagina de inicio.
 //app.get("/", (req,res) =>{

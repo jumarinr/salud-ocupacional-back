@@ -12,7 +12,7 @@ router.get("/", (req,res)=>{
 
     Empleado.find({}).
     then(empleadosRetornados =>{
-        res.json({error: false, datos: empleadosRetornados});
+        res.json({error: false, datos: empleadosRetornados, datosSesion: req.session.datos});
     })
     .catch(err =>{
         res.json({error: true, mensaje: "Error al buscar empleados", datos: err})
@@ -73,7 +73,7 @@ router.post("/", (req,res) =>{
             contactoAllegado : req.body.telefonoFamiliar,
             nivelRiesgoLaboral : req.body.nivelRiesgo,
             areaTrabajo : area,
-            //registradoPor : req.body.registradoPor,
+            registradoPor : req.session.datos.identificacion,
             detallesVacunacion : arregloRetornado
         }, (err) => {
             if (err) res.json({error: true, mensaje: "Ya existe un usuario con esa informacion"});
@@ -129,12 +129,12 @@ router.put("/:id", (req,res) =>{
 //Eliminar empleados
 router.delete("/:id", (req, res) => {
     let empleadoId = req.params.id;
-    Empleado.findByIdAndRemove(empleadoId).then(trabajador => {
-        if(trabajador) {
-            res.json({error: false, mensaje: "Se eliminó al empleado correctamente"})
-        } else {
-            res.json({error: true, mensaje: "No se pudo eliminar al empleado"})
-        }
+    Empleado.findByIdAndRemove(empleadoId)
+    .then(trabajador => {
+        res.json({error: false, mensaje: "Se eliminó el empleado correctamente"})
+    })
+    .catch(err =>{
+        res.json({error: true, mensaje: "No se pudo eliminar el empleado", datos: err}) 
     })
 });
 
