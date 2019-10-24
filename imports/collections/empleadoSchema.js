@@ -45,7 +45,7 @@ const empleadoSchema = new mongoose.Schema({
         type: String,
         require: true
     },
-    nivelRiesgoLabolar:{
+    nivelRiesgoLaboral:{
         type: String,
         require: true,
     },
