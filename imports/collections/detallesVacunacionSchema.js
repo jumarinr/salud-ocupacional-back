@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 
-const detallesVacunacionSchema = new.mongoose.Schema({
+const detallesVacunacionSchema = new mongoose.Schema({
     vacuna:{ 
     type: mongoose.Schema.Types.ObjectId,
     require: true
