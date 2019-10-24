@@ -24,13 +24,22 @@ const puerto = process.env.PORT || 4000;
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: true}));
 
-
+// ---- SESSION ------//
 // Pemite user la session en los req de las rutas
 app.use(session({
   resave: true,
   saveUninitialized: true,
   secret: "La cerda esta en la pocilga" // Importante para que la session tenga un hash unico basado en este string
 }))
+
+// Middleware para comprobar que haya una session.
+// Si no la hay se agregare un false.
+app.use((req,res,next) =>{
+  if (!req.session.datos){
+    req.session.datos = false
+  }
+  next()
+})
 
 
 // ---- RUTAS ------//

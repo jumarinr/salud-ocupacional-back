@@ -46,6 +46,7 @@ let detallesVacunasFunc = (arregloVacunasEnviado) => {
 
 }
 
+
 // Agregar empleados
 router.post("/", (req,res) =>{
 
@@ -60,6 +61,7 @@ router.post("/", (req,res) =>{
     let detallesVacunasGuar  = detallesVacunasFunc(req.body.detallesVacunacion);
 
     detallesVacunasGuar.then(arregloRetornado =>{
+
         const usuario = new Empleado({
             tipoIdentificacion : req.body.tipoDocumento,
             identificacion : req.body.documento,
@@ -73,7 +75,7 @@ router.post("/", (req,res) =>{
             contactoAllegado : req.body.telefonoFamiliar,
             nivelRiesgoLaboral : req.body.nivelRiesgo,
             areaTrabajo : area,
-            registradoPor : req.session.datos.identificacion,
+            registradoPor : req.session.datos.id,
             detallesVacunacion : arregloRetornado
         }, (err) => {
             if (err) res.json({error: true, mensaje: "Ya existe un usuario con esa informacion"});

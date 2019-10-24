@@ -14,11 +14,11 @@ router.post('/', (req, res) => {
         if(usuarioEncontrado) {
             if (usuarioEncontrado.identificacion === req.body.contrasena) {
                 req.session.datos = {
+                    id: usuarioEncontrado._id,
                     identificacion : usuarioEncontrado.identificacion,
                     nombres : usuarioEncontrado.nombres,
                     apellidos : usuarioEncontrado.apellidos
                 }
-                console.log(req.session.datos)
                 res.json({error: false, mensaje: "Logeado con exito"})
             } else {
                 res.json({error: true, mensaje: "Contrasena incorrecta"})
