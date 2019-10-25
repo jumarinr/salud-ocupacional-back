@@ -1,5 +1,6 @@
 const express = require("express");
 const cors = require('cors');
+const mongoose = require("mongoose");
 
 const router = express.Router();
 router.use(cors());
@@ -39,7 +40,7 @@ let detallesVacunasFunc = (arregloVacunasEnviado) => {
 
     let arregloPromesas = []
     for (idVacunaActual of arregloVacunasEnviado){
-        arregloPromesas.push(Vacuna.findOne({_id: idVacunaActual},{_id:1,cantidadAplicar:1}).exec())
+        arregloPromesas.push(Vacuna.findOne({_id: idVacunaActual},'_id').exec())
     }
 
     return(Promise.all(arregloPromesas))
@@ -60,6 +61,17 @@ router.post("/", (req,res) =>{
     let detallesVacunasGuar  = detallesVacunasFunc(req.body.detallesVacunacion);
 
     detallesVacunasGuar.then(arregloRetornado =>{
+
+        arregloDetallesVacunacion = []
+
+        for (idVacuna of arregloRetornado){
+            arregloDetallesVacunacion.push({
+            vacuna: new mongoose.mongo.ObjectId(idVacuna._id),
+            cantidadAplicada: 0, // Por ahora es cero, en un futuro se debe mandar por el request.
+            registradoPor: null // Por ahora null, en un futuro es el objecId de quien le registró el detalleVacuna al empleado. 
+        })
+        }
+
         const usuario = new Empleado({
             tipoIdentificacion : req.body.tipoDocumento,
             identificacion : req.body.documento,
@@ -74,7 +86,7 @@ router.post("/", (req,res) =>{
             nivelRiesgoLaboral : req.body.nivelRiesgo,
             areaTrabajo : area,
             //registradoPor : req.body.registradoPor,
-            detallesVacunacion : arregloRetornado
+            detallesVacunacion : arregloDetallesVacunacion
         }, (err) => {
             if (err) res.json({error: true, mensaje: "Ya existe un usuario con esa informacion"});
         })
