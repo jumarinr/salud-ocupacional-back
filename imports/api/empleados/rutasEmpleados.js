@@ -1,5 +1,6 @@
 const express = require("express");
 const cors = require('cors');
+const mongoose = require("mongoose");
 
 const router = express.Router();
 router.use(cors());
@@ -35,11 +36,11 @@ router.get("/:id", (req,res) =>{
 
 //Por orden las funciones deberian ir en otro lugar pero esta se queda aqui ya que es solo una.
 // por el momento se descarta la función y se guarda un array de _ids
-let detallesVacunasFunc = (arregloVacunasEnviado) => { 
+let detallesVacunasFunc = (arregloVacunasEnviado) => {
 
     let arregloPromesas = []
     for (idVacunaActual of arregloVacunasEnviado){
-        arregloPromesas.push(Vacuna.findOne({_id: idVacunaActual},{_id:1,cantidadAplicar:1}).exec())
+        arregloPromesas.push(Vacuna.findOne({_id: idVacunaActual},'_id').exec())
     }
 
     return(Promise.all(arregloPromesas))
@@ -62,6 +63,16 @@ router.post("/", (req,res) =>{
 
     detallesVacunasGuar.then(arregloRetornado =>{
 
+        arregloDetallesVacunacion = []
+
+        for (idVacuna of arregloRetornado){
+            arregloDetallesVacunacion.push({
+            vacuna: new mongoose.mongo.ObjectId(idVacuna._id),
+            cantidadAplicada: 0, // Por ahora es cero(según la historia de usuario), en un futuro se debe mandar por el request.
+            registradoPor: null // Por ahora null, en un futuro es el objecId de quien le registró el detalleVacuna al empleado.
+        })
+        }
+
         const usuario = new Empleado({
             tipoIdentificacion : req.body.tipoDocumento,
             identificacion : req.body.documento,
@@ -75,19 +86,19 @@ router.post("/", (req,res) =>{
             contactoAllegado : req.body.telefonoFamiliar,
             nivelRiesgoLaboral : req.body.nivelRiesgo,
             areaTrabajo : area,
-            registradoPor : req.session.datos.id,
-            detallesVacunacion : arregloRetornado
+            //registradoPor : req.body.registradoPor,
+            detallesVacunacion : arregloDetallesVacunacion
         }, (err) => {
             if (err) res.json({error: true, mensaje: "Ya existe un usuario con esa informacion"});
         })
-    
+
         usuario.save().
         then(exito => {
             res.json({error: false, mensaje: "Se guardo el empleado correctamente"})
         })
         .catch(err =>{
             res.json({error: true, mensaje: "Error al crear el empleado", datos: err})
-        });      
+        });
     })
     .catch(err =>{
         res.json({error: true, mensaje: "Error al crear el empleado", datos: err})
@@ -105,7 +116,7 @@ router.put("/:id", (req,res) =>{
         area = "Empleado normal"
     }
 
-    Empleado.findByIdAndUpdate(req.params.id, 
+    Empleado.findByIdAndUpdate(req.params.id,
         {$set: {tipoIdentificacion: req.body.tipoDocumento,
                 identificacion : req.body.documento,
                 correo : req.body.correo,
@@ -123,7 +134,7 @@ router.put("/:id", (req,res) =>{
         res.json({error: false, mensaje: "Se actualizo la informacion del empleado con exito", datos: empleadoActualizado})
     })
     .catch(err =>{
-        res.json({error: true, mensaje: "Error al actualizar la informacion del empleado", datos: err})    
+        res.json({error: true, mensaje: "Error al actualizar la informacion del empleado", datos: err})
     })
 
 })
@@ -136,7 +147,7 @@ router.delete("/:id", (req, res) => {
         res.json({error: false, mensaje: "Se eliminó el empleado correctamente"})
     })
     .catch(err =>{
-        res.json({error: true, mensaje: "No se pudo eliminar el empleado", datos: err}) 
+        res.json({error: true, mensaje: "No se pudo eliminar el empleado", datos: err})
     })
 });
 
