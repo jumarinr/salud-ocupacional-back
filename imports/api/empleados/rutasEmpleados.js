@@ -67,7 +67,7 @@ router.post("/", (req,res) =>{
         for (idVacuna of arregloRetornado){
             arregloDetallesVacunacion.push({
             vacuna: new mongoose.mongo.ObjectId(idVacuna._id),
-            cantidadAplicada: 0, // Por ahora es cero, en un futuro se debe mandar por el request.
+            cantidadAplicada: 0, // Por ahora es cero(según la historia de usuario), en un futuro se debe mandar por el request.
             registradoPor: null // Por ahora null, en un futuro es el objecId de quien le registró el detalleVacuna al empleado. 
         })
         }

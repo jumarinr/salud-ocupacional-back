@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const detallesVacunacionSchema = require("./detallesVacunacionSchema.js")
 
 const empleadoSchema = new mongoose.Schema({
     tipoIdentificacion:{
@@ -56,11 +57,11 @@ const empleadoSchema = new mongoose.Schema({
         en la area de salud, entonces significa que es un empleado normal (REVISAR) */
     },
     registradoPor:{
-        type: Object,
+        type: mongoose.Schema.Types.ObjectId,
         default: null
     },
     detallesVacunacion:{
-        type: Array,
+        type: [detallesVacunacionSchema],
         default: []
     }
 });
