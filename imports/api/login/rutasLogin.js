@@ -17,7 +17,7 @@ router.post('/', (req, res) => {
                     id: usuarioEncontrado._id,
                     identificacion : usuarioEncontrado.identificacion,
                     nombres : usuarioEncontrado.nombres,
-                    apellidos : usuarioEncontrado.apellidos
+                    areaTrabajo : usuarioEncontrado.areaTrabajo
                 }
                 res.json({error: false, mensaje: "Logeado con exito"})
             } else {

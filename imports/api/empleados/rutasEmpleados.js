@@ -6,14 +6,16 @@ const router = express.Router();
 router.use(cors());
 
 const Empleado = require("../../collections/empleadoSchema");
-const Vacuna = require("../../collections/vacunaSchema");
+
+//------REQUIRE DE FUNCIONES CREADAS------
+const funcPromesasVacunas = require("../../functions/arregloPromesas");
 
 // Obtener empleados
 router.get("/", (req,res)=>{
 
     Empleado.find({}).
     then(empleadosRetornados =>{
-        res.json({error: false, datos: empleadosRetornados, datosSesion: req.session.datos});
+        res.json({error: false, datos: empleadosRetornados});
     })
     .catch(err =>{
         res.json({error: true, mensaje: "Error al buscar empleados", datos: err})
@@ -34,19 +36,6 @@ router.get("/:id", (req,res) =>{
 
 })
 
-//Por orden las funciones deberian ir en otro lugar pero esta se queda aqui ya que es solo una.
-// por el momento se descarta la función y se guarda un array de _ids
-let detallesVacunasFunc = (arregloVacunasEnviado) => {
-
-    let arregloPromesas = []
-    for (idVacunaActual of arregloVacunasEnviado){
-        arregloPromesas.push(Vacuna.findOne({_id: idVacunaActual},'_id').exec())
-    }
-
-    return(Promise.all(arregloPromesas))
-
-}
-
 
 // Agregar empleados
 router.post("/", (req,res) =>{
@@ -59,21 +48,21 @@ router.post("/", (req,res) =>{
         area = "Empleado normal"
     }
 
-    let detallesVacunasGuar  = detallesVacunasFunc(req.body.detallesVacunacion);
+    let detallesVacunasGuar  = funcPromesasVacunas(req.body.detallesVacunacion);
 
     detallesVacunasGuar.then(arregloRetornado =>{
 
-        arregloDetallesVacunacion = []
+        let arregloDetallesVacunacion = []
 
         for (idVacuna of arregloRetornado){
             arregloDetallesVacunacion.push({
             vacuna: new mongoose.mongo.ObjectId(idVacuna._id),
             cantidadAplicada: 0, // Por ahora es cero(según la historia de usuario), en un futuro se debe mandar por el request.
-            registradoPor: null // Por ahora null, en un futuro es el objecId de quien le registró el detalleVacuna al empleado.
+            registradoPor: new mongoose.mongo.ObjectId(req.session.datos.id)
         })
         }
 
-        const usuario = new Empleado({
+        const nuevoEmpleado = new Empleado({
             tipoIdentificacion : req.body.tipoDocumento,
             identificacion : req.body.documento,
             correo : req.body.correo,
@@ -86,13 +75,12 @@ router.post("/", (req,res) =>{
             contactoAllegado : req.body.telefonoFamiliar,
             nivelRiesgoLaboral : req.body.nivelRiesgo,
             areaTrabajo : area,
-            //registradoPor : req.body.registradoPor,
             detallesVacunacion : arregloDetallesVacunacion
         }, (err) => {
             if (err) res.json({error: true, mensaje: "Ya existe un usuario con esa informacion"});
         })
 
-        usuario.save().
+        nuevoEmpleado.save().
         then(exito => {
             res.json({error: false, mensaje: "Se guardo el empleado correctamente"})
         })
@@ -116,33 +104,49 @@ router.put("/:id", (req,res) =>{
         area = "Empleado normal"
     }
 
-    Empleado.findByIdAndUpdate(req.params.id,
-        {$set: {tipoIdentificacion: req.body.tipoDocumento,
-                identificacion : req.body.documento,
-                correo : req.body.correo,
-                nombres : req.body.nombres,
-                apellidos : req.body.apellidos,
-                fechaNacimiento : req.body.fechaNacimiento,
-                direccion : req.body.direccion,
-                telefono : req.body.telefono,
-                celular : req.body.celular,
-                contactoAllegado : req.body.telefonoFamiliar,
-                nivelRiesgoLaboral : req.body.nivelRiesgo,
-                areaTrabajo : area,
-                detallesVacunacion : req.body.detallesVacunacion}},{new:true})
-    .then(empleadoActualizado =>{
-        res.json({error: false, mensaje: "Se actualizo la informacion del empleado con exito", datos: empleadoActualizado})
+    let detallesVacunasGuar  = funcPromesasVacunas(req.body.detallesVacunacion);
+
+    detallesVacunasGuar.then(arregloRetornado =>{
+
+        let arregloDetallesVacunacion = []
+
+        for (idVacuna of arregloRetornado){
+            arregloDetallesVacunacion.push({
+            vacuna: new mongoose.mongo.ObjectId(idVacuna._id),
+            cantidadAplicada: 0, // Por ahora es cero(según la historia de usuario), en un futuro se debe mandar por el request.
+            registradoPor: new mongoose.mongo.ObjectId(req.session.datos.id)
+            })
+        }
+
+        Empleado.findByIdAndUpdate(req.params.id,
+            {$set: {tipoIdentificacion: req.body.tipoDocumento,
+                    identificacion : req.body.documento,
+                    correo : req.body.correo,
+                    nombres : req.body.nombres,
+                    apellidos : req.body.apellidos,
+                    fechaNacimiento : req.body.fechaNacimiento,
+                    direccion : req.body.direccion,
+                    telefono : req.body.telefono,
+                    celular : req.body.celular,
+                    contactoAllegado : req.body.telefonoFamiliar,
+                    nivelRiesgoLaboral : req.body.nivelRiesgo,
+                    areaTrabajo : area,
+                    detallesVacunacion : arregloDetallesVacunacion}},{new:true})
+        .then(empleadoActualizado =>{
+            res.json({error: false, mensaje: "Se actualizo la informacion del empleado con exito", datos: empleadoActualizado})
+        })
+        .catch(err =>{
+            res.json({error: true, mensaje: "Error al actualizar la informacion del empleado", datos: err})
+        })
     })
     .catch(err =>{
-        res.json({error: true, mensaje: "Error al actualizar la informacion del empleado", datos: err})
+        res.json({error: true, mensaje: "Error al actualizar el empleado", datos: err})
     })
-
 })
 
-//Eliminar empleados
+//Eliminar empleado
 router.delete("/:id", (req, res) => {
-    let empleadoId = req.params.id;
-    Empleado.findByIdAndRemove(empleadoId)
+    Empleado.findByIdAndRemove(req.params.id)
     .then(trabajador => {
         res.json({error: false, mensaje: "Se eliminó el empleado correctamente"})
     })
