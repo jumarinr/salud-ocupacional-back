@@ -10,6 +10,7 @@ const Empleado = require("../../collections/empleadoSchema");
 //------REQUIRE DE FUNCIONES CREADAS------
 const funcPromesasVacunas = require("../../functions/arregloPromesas");
 
+
 // Obtener empleados
 router.get("/", (req,res)=>{
 
@@ -22,6 +23,7 @@ router.get("/", (req,res)=>{
     })
 
 })
+
 
 // Obtener un unico empleado
 router.get("/:id", (req,res) =>{
@@ -93,6 +95,7 @@ router.post("/", (req,res) =>{
     })
 });
 
+
 //Actualizar empleado
 router.put("/:id", (req,res) =>{
 
@@ -143,6 +146,7 @@ router.put("/:id", (req,res) =>{
         res.json({error: true, mensaje: "Error al actualizar el empleado", datos: err})
     })
 })
+
 
 //Eliminar empleado
 router.delete("/:id", (req, res) => {

@@ -32,4 +32,15 @@ router.post('/', (req, res) => {
     })
 })
 
+
+// Cerrar sesion
+router.delete('/', (req,res) =>{
+    console.log(req.session.datos)
+    req.session.destroy(err =>{
+        if (err) res.json({error: true, mensaje: "No se pudo cerrar la sesion correctamente"})
+        res.json({error: false, mensaje: "Se cerro la sesion correctamente"})
+    })
+    
+})
+
 module.exports = router
