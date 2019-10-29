@@ -17,7 +17,7 @@ router.post('/', (req, res) => {
                     id: usuarioEncontrado._id,
                     identificacion : usuarioEncontrado.identificacion,
                     nombres : usuarioEncontrado.nombres,
-                    apellidos : usuarioEncontrado.apellidos
+                    areaTrabajo : usuarioEncontrado.areaTrabajo
                 }
                 res.json({error: false, mensaje: "Logeado con exito"})
             } else {
@@ -30,6 +30,16 @@ router.post('/', (req, res) => {
     .catch(err => {
         res.send('error: ' + err)
     })
+})
+
+
+// Cerrar sesion
+router.delete('/', (req,res) =>{
+    req.session.destroy(err =>{
+        if (err) res.json({error: true, mensaje: "No se pudo cerrar la sesion correctamente"})
+        res.json({error: false, mensaje: "Se cerro la sesion correctamente"})
+    })
+    
 })
 
 module.exports = router
