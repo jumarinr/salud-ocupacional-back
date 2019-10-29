@@ -38,7 +38,7 @@ app.use((req,res,next) =>{
   if (!req.session.datos){
     req.session.datos = false
   }
-  res.set("Session", req.session.datos)
+  res.set("Session", JSON.stringify(req.session.datos))
   next()
 })
 
