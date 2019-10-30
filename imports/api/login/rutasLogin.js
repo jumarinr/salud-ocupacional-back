@@ -40,6 +40,7 @@ router.post('/', (req, res) => {
 router.delete('/', (req,res) =>{
     req.session.destroy(err =>{
         if (err) res.json({error: true, mensaje: "No se pudo cerrar la sesion correctamente"})
+        res.set("Session", false)
         res.json({error: false, mensaje: "Se cerro la sesion correctamente"})
     })
     
