@@ -6,6 +6,7 @@ router.use(cors());
 
 const Vacuna = require("../../collections/vacunaSchema");
 
+
 // Obtener vacunas
 router.get('/',(req,res) => {
 
@@ -17,6 +18,20 @@ router.get('/',(req,res) => {
         res.json("Error: " + err);
     })
 })
+
+
+// Obtener una unica vacuna por ID
+router.get('/:id',(req,res) => {
+
+    Vacuna.findById(req.params.id).
+    then(vacunaRetornada =>{
+        res.json({error: false, datos: vacunaRetornada});
+    })
+    .catch(err =>{
+        res.json({error: true, mensaje: "Error al buscar la vacuna solicitada", datos: err})
+    })
+})
+
 
 // Agregar vacunas
 router.post("/", (req,res)=>{
