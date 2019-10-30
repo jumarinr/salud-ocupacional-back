@@ -15,6 +15,7 @@ const funcPromesasVacunas = require("../../functions/arregloPromesas");
 router.get("/", (req,res)=>{
 
     Empleado.find({}).
+    populate("detallesVacunacion.vacuna").
     then(empleadosRetornados =>{
         res.json({error: false, datos: empleadosRetornados});
     })
@@ -29,6 +30,7 @@ router.get("/", (req,res)=>{
 router.get("/:id", (req,res) =>{
 
     Empleado.findById(req.params.id).
+    populate("detallesVacunacion.vacuna").
     then(empleadoRetornado =>{
         res.json({error: false, datos: empleadoRetornado});
     })
