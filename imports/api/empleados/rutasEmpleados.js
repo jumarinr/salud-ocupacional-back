@@ -79,6 +79,7 @@ router.post("/", (req,res) =>{
             contactoAllegado : req.body.telefonoFamiliar,
             nivelRiesgoLaboral : req.body.nivelRiesgo,
             areaTrabajo : area,
+            registradoPor : new mongoose.mongo.ObjectId(req.session.datos.id),
             detallesVacunacion : arregloDetallesVacunacion
         }, (err) => {
             if (err) res.json({error: true, mensaje: "Ya existe un usuario con esa informacion"});
