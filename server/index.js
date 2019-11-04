@@ -3,6 +3,8 @@ const express = require("express")
 const bodyParser = require("body-parser")
 const session = require('express-session')
 
+const cors = require('cors')
+
 
 // Requires de modulos diseñados por los desarrolladores
 require('../imports/configurations/db-connection');
@@ -53,6 +55,8 @@ app.use("/vacunas", rutasVacunas);
 app.use("/empleados", rutasEmpleados);
 app.use("/login", rutasLogin);
 
+
+app.use(cors());
 
 // Ruta a la pagina de inicio.
 //app.get("/", (req,res) =>{
