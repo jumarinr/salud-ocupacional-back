@@ -35,18 +35,20 @@ app.use(bodyParser.urlencoded({extended: true}));
 // Pemite user la session en los req de las rutas
 app.use(session({
   resave: false,
-  saveUninitialized: false,
+  saveUninitialized: false,  
   secret: "La cerda esta en la pocilga", // Importante para que la session tenga un hash unico basado en este string
-  cookie: { secure: false }
+  cookie: {
+    maxAge: 900000 // `ms` is a node module to convert string into milliseconds
+  }
 }))
 
 
 // Middleware para comprobar que haya una session.
 // Si no la hay se agregare un false.
 app.use((req,res,next) =>{
-  /*if (typeof req.session.datos === 'undefined'){
+  if (typeof req.session.datos === 'undefined'){
     req.session.datos = false
-  }*/
+  }
   res.set("Session", JSON.stringify(req.session.datos))
   // console.log(req.session)
   // if ((req.originalUrl == "/login" && req.method == "DELETE" && !req.session.datos) || (req.originalUrl != "/login" && !req.session.datos)){
