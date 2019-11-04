@@ -1,9 +1,7 @@
 const express = require("express");
-const cors = require('cors');
 const mongoose = require("mongoose");
 
 const router = express.Router();
-router.use(cors());
 
 const Empleado = require("../../collections/empleadoSchema");
 

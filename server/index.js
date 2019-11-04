@@ -22,9 +22,14 @@ el puerto sera asignado a 4000 */
 const puerto = process.env.PORT || 4000;
 
 
+/* Para usar cors */
+app.use(cors());
+
+
 // Es necesario situar el bodyParser como un middleware para poder recibir los datos enviados por el metodo POST 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: true}));
+
 
 // ---- SESSION ------//
 // Pemite user la session en los req de las rutas
@@ -33,6 +38,7 @@ app.use(session({
   saveUninitialized: true,
   secret: "La cerda esta en la pocilga" // Importante para que la session tenga un hash unico basado en este string
 }))
+
 
 // Middleware para comprobar que haya una session.
 // Si no la hay se agregare un false.
@@ -55,8 +61,6 @@ app.use("/vacunas", rutasVacunas);
 app.use("/empleados", rutasEmpleados);
 app.use("/login", rutasLogin);
 
-
-app.use(cors());
 
 // Ruta a la pagina de inicio.
 //app.get("/", (req,res) =>{
