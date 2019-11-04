@@ -36,10 +36,7 @@ app.use(bodyParser.urlencoded({extended: true}));
 app.use(session({
   resave: false,
   saveUninitialized: false,  
-  secret: "La cerda esta en la pocilga", // Importante para que la session tenga un hash unico basado en este string
-  cookie: {
-    maxAge: 900000 // `ms` is a node module to convert string into milliseconds
-  }
+  secret: "La cerda esta en la pocilga" // Importante para que la session tenga un hash unico basado en este string
 }))
 
 
