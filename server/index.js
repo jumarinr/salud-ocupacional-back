@@ -34,7 +34,7 @@ app.use(bodyParser.urlencoded({extended: true}));
 // ---- SESSION ------//
 // Pemite user la session en los req de las rutas
 app.use(session({
-  resave: true,
+  resave: false,
   saveUninitialized: true,
   secret: "La cerda esta en la pocilga" // Importante para que la session tenga un hash unico basado en este string
 }))
