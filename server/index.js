@@ -49,7 +49,7 @@ app.use((req,res,next) =>{
   /*if (typeof req.session.datos === 'undefined'){
     req.session.datos = false
   }*/
-  res.set("Session", JSON.stringify(req.session.datos))
+  //res.set("Session", JSON.stringify(req.session.datos))
   // console.log(req.session)
   // if ((req.originalUrl == "/login" && req.method == "DELETE" && !req.session.datos) || (req.originalUrl != "/login" && !req.session.datos)){
   //  return res.status(405).json({error: true, mensaje: "No se ha iniciado sesion por lo que no se puede completar la operacion que desea"})
