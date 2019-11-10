@@ -40,26 +40,26 @@ app.use(session({
 }))
 
 
-// ---- RUTAS ------//
-// Las rutas deben estar separadas en la correspondiente carpeta Rutas para facil mantenibilidad.
-app.use("/vacunas", rutasVacunas);
-app.use("/empleados", rutasEmpleados);
-app.use("/login", rutasLogin);
-
-
 // Middleware para comprobar que haya una session.
 // Si no la hay se agregare un false.
 app.use((req,res,next) =>{
   if (typeof req.session.datos === 'undefined'){
     req.session.datos = false
   }
-  res.set("Session", JSON.stringify(req.session.datos))
+  res.setHeader("Session", JSON.stringify(req.session.datos))
   // console.log(req.session)
   // if ((req.originalUrl == "/login" && req.method == "DELETE" && !req.session.datos) || (req.originalUrl != "/login" && !req.session.datos)){
   //  return res.status(405).json({error: true, mensaje: "No se ha iniciado sesion por lo que no se puede completar la operacion que desea"})
   // }
   next()
 })
+
+
+// ---- RUTAS ------//
+// Las rutas deben estar separadas en la correspondiente carpeta Rutas para facil mantenibilidad.
+app.use("/vacunas", rutasVacunas);
+app.use("/empleados", rutasEmpleados);
+app.use("/login", rutasLogin);
 
 
 // Ruta a la pagina de inicio.
