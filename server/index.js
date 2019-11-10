@@ -22,6 +22,13 @@ el puerto sera asignado a 4000 */
 const puerto = process.env.PORT || 4000;
 
 
+// ---- RUTAS ------//
+// Las rutas deben estar separadas en la correspondiente carpeta Rutas para facil mantenibilidad.
+app.use("/vacunas", rutasVacunas);
+app.use("/empleados", rutasEmpleados);
+app.use("/login", rutasLogin);
+
+
 /* Para usar cors */
 app.use(cors())
 
@@ -36,7 +43,8 @@ app.use(bodyParser.urlencoded({extended: true}));
 app.use(session({
   resave: false,
   saveUninitialized: false,  
-  secret: "La cerda esta en la pocilga"// Importante para que la session tenga un hash unico basado en este string
+  secret: "La cerda esta en la pocilga",// Importante para que la session tenga un hash unico basado en este string
+  cookie: { secure: false }
 }))
 
 
@@ -53,13 +61,6 @@ app.use((req,res,next) =>{
   // }
   next()
 })
-
-
-// ---- RUTAS ------//
-// Las rutas deben estar separadas en la correspondiente carpeta Rutas para facil mantenibilidad.
-app.use("/vacunas", rutasVacunas);
-app.use("/empleados", rutasEmpleados);
-app.use("/login", rutasLogin);
 
 
 // Ruta a la pagina de inicio.
