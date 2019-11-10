@@ -17,7 +17,6 @@ router.post('/', (req, res) => {
                     nombres : usuarioEncontrado.nombres,
                     areaTrabajo : usuarioEncontrado.areaTrabajo
                 }
-                req.session.save()
                 res.set("Session", JSON.stringify(req.session.datos))
                 res.json({error: false, mensaje: "Logeado con exito"})
             } else {

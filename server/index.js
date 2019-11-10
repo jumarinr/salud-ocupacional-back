@@ -2,7 +2,6 @@
 const express = require("express")
 const bodyParser = require("body-parser")
 const session = require('express-session')
-
 const cors = require('cors')
 
 
@@ -36,10 +35,7 @@ app.use(bodyParser.urlencoded({extended: true}));
 app.use(session({
   resave: false,
   saveUninitialized: false,  
-  secret: "La cerda esta en la pocilga",// Importante para que la session tenga un hash unico basado en este string
-  cookie: {
-    maxAge: 30 * 24 * 60 * 60 * 1000
-  }
+  secret: "La cerda esta en la pocilga"// Importante para que la session tenga un hash unico basado en este string
 }))
 
 
