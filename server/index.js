@@ -43,8 +43,7 @@ app.use(bodyParser.urlencoded({extended: true}));
 app.use(session({
   resave: false,
   saveUninitialized: false,  
-  secret: "La cerda esta en la pocilga",// Importante para que la session tenga un hash unico basado en este string
-  cookie: { secure: false }
+  secret: "La cerda esta en la pocilga"// Importante para que la session tenga un hash unico basado en este string
 }))
 
 
