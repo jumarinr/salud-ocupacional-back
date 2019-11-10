@@ -31,13 +31,6 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: true}));
 
 
-// ---- RUTAS ------//
-// Las rutas deben estar separadas en la correspondiente carpeta Rutas para facil mantenibilidad.
-app.use("/vacunas", rutasVacunas);
-app.use("/empleados", rutasEmpleados);
-app.use("/login", rutasLogin);
-
-
 // ---- SESSION ------//
 // Pemite user la session en los req de las rutas
 app.use(session({
@@ -45,6 +38,13 @@ app.use(session({
   saveUninitialized: false,  
   secret: "La cerda esta en la pocilga"// Importante para que la session tenga un hash unico basado en este string
 }))
+
+
+// ---- RUTAS ------//
+// Las rutas deben estar separadas en la correspondiente carpeta Rutas para facil mantenibilidad.
+app.use("/vacunas", rutasVacunas);
+app.use("/empleados", rutasEmpleados);
+app.use("/login", rutasLogin);
 
 
 // Middleware para comprobar que haya una session.
