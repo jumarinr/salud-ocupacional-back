@@ -15,7 +15,6 @@ router.get("/", (req,res)=>{
     Empleado.find({}).
     populate("detallesVacunacion.vacuna").
     then(empleadosRetornados =>{
-        res.setHeader("Session", JSON.stringify(req.session.datos))
         res.json({error: false, datos: empleadosRetornados});
     })
     .catch(err =>{
@@ -89,7 +88,7 @@ router.post("/", (req,res) =>{
             res.json({error: false, mensaje: "Se guardo el empleado correctamente"})
         })
         .catch(err =>{
-            res.json({error: true, mensaje: "Error al crear el empleado", datos: err})
+            res.json({error: true, mensaje: "El trabajador ya se encuentra registrado: correo o documento repetido", datos: err})
         });
     })
     .catch(err =>{
