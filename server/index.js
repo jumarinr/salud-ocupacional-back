@@ -22,13 +22,6 @@ el puerto sera asignado a 4000 */
 const puerto = process.env.PORT || 4000;
 
 
-// ---- RUTAS ------//
-// Las rutas deben estar separadas en la correspondiente carpeta Rutas para facil mantenibilidad.
-app.use("/vacunas", rutasVacunas);
-app.use("/empleados", rutasEmpleados);
-app.use("/login", rutasLogin);
-
-
 /* Para usar cors */
 app.use(cors())
 
@@ -36,6 +29,13 @@ app.use(cors())
 // Es necesario situar el bodyParser como un middleware para poder recibir los datos enviados por el metodo POST 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: true}));
+
+
+// ---- RUTAS ------//
+// Las rutas deben estar separadas en la correspondiente carpeta Rutas para facil mantenibilidad.
+app.use("/vacunas", rutasVacunas);
+app.use("/empleados", rutasEmpleados);
+app.use("/login", rutasLogin);
 
 
 // ---- SESSION ------//
