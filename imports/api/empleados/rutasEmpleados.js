@@ -15,6 +15,7 @@ router.get("/", (req,res)=>{
     Empleado.find({}).
     populate("detallesVacunacion.vacuna").
     then(empleadosRetornados =>{
+        res.setHeader("Session", JSON.stringify(req.session.datos))
         res.json({error: false, datos: empleadosRetornados});
     })
     .catch(err =>{
