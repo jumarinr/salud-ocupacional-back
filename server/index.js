@@ -22,7 +22,7 @@ const puerto = process.env.PORT || 4000;
 
 
 /* Para usar cors */
-app.use(cors({credentials: true}))
+app.use(cors({credentials: true, origin:'https://salud-ocupacional.herokuapp.com'}))
 
 
 // Es necesario situar el bodyParser como un middleware para poder recibir los datos enviados por el metodo POST 
