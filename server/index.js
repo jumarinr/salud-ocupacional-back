@@ -35,7 +35,8 @@ app.use(bodyParser.urlencoded({extended: true}));
 app.use(session({
   resave: false,
   saveUninitialized: false,  
-  secret: "La cerda esta en la pocilga"// Importante para que la session tenga un hash unico basado en este string
+  secret: "La cerda esta en la pocilga",// Importante para que la session tenga un hash unico basado en este string
+  cookie: { maxAge: 300000 }
 }))
 
 
@@ -46,9 +47,9 @@ app.use((req,res,next) =>{
     req.session.datos = false
   }
   res.setHeader("Session", JSON.stringify(req.session.datos))
-  /*if ((req.originalUrl == "/login" && req.method == "DELETE" && !req.session.datos) || (req.originalUrl != "/login" && !req.session.datos)){
+  if ((req.originalUrl == "/login" && req.method == "DELETE" && !req.session.datos) || (req.originalUrl != "/login" && !req.session.datos)){
     return res.status(405).json({error: true, mensaje: "No se ha iniciado sesion por lo que no se puede completar la operacion que desea"})
-  }*/
+  }
   next()
 })
 
