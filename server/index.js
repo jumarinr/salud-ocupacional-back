@@ -36,7 +36,8 @@ app.use(session({
   resave: false,
   saveUninitialized: false,  
   secret: "La cerda esta en la pocilga",// Importante para que la session tenga un hash unico basado en este string
-  cookie: { maxAge: 300000 }
+  cookie: { maxAge: 2700000 },
+  rolling: true
 }))
 
 
