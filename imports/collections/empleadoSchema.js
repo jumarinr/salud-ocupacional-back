@@ -1,5 +1,5 @@
 const mongoose = require("mongoose");
-const detallesVacunacionSchema = require("./detallesVacunacionSchema.js")
+const detallesVacunacionSchema = require("./detallesVacunacionSchema.js").schema
 
 const empleadoSchema = new mongoose.Schema({
     tipoIdentificacion:{
@@ -66,6 +66,5 @@ const empleadoSchema = new mongoose.Schema({
     }
 });
 
-const Empleado = mongoose.model("Empleado", empleadoSchema);
 
-module.exports = Empleado
+module.exports = mongoose.model("Empleado", empleadoSchema);

@@ -4,6 +4,7 @@ const mongoose = require("mongoose");
 const router = express.Router();
 
 const Empleado = require("../../collections/empleadoSchema");
+const DetalleVacunacion = require("../../collections/detallesVacunacionSchema").model
 
 //------REQUIRE DE FUNCIONES CREADAS------
 const funcPromesasVacunas = require("../../functions/arregloPromesas");
@@ -60,6 +61,7 @@ router.post("/", (req,res) =>{
             arregloDetallesVacunacion.push({
             vacuna: new mongoose.mongo.ObjectId(idVacuna._id),
             cantidadAplicada: 0, // Por ahora es cero(según la historia de usuario), en un futuro se debe mandar por el request.
+            aplicaciones: [],
             registradoPor: new mongoose.mongo.ObjectId(req.session.datos.id)
         })
         }
@@ -118,6 +120,7 @@ router.put("/:id", (req,res) =>{
             arregloDetallesVacunacion.push({
             vacuna: new mongoose.mongo.ObjectId(idVacuna._id),
             cantidadAplicada: 0, // Por ahora es cero(según la historia de usuario), en un futuro se debe mandar por el request.
+            aplicaciones: [],
             registradoPor: new mongoose.mongo.ObjectId(req.session.datos.id)
             })
         }
@@ -159,6 +162,177 @@ router.delete("/:id", (req, res) => {
         res.json({error: true, mensaje: "No se pudo eliminar el empleado", datos: err})
     })
 });
+
+
+//Aplicar Vacuna empleado
+router.post("/:idEmpleado/vacunas/:idVacuna", (req,res) =>{
+
+    Empleado.findById(req.params.idEmpleado).
+    populate("detallesVacunacion.vacuna")
+    .then(trabajador =>{
+
+        let nuevoDetallesVacunacion = []
+        for (elemento of trabajador.detallesVacunacion){
+
+            let fechaActual = new Date();        
+            let fechaIngresada = new Date(req.body.fechaAplicacion)
+
+            if (elemento.vacuna._id == req.params.idVacuna){
+
+                if (elemento.aplicaciones.length == 0){
+
+                    let nuevasAplicaciones = []
+                    nuevasAplicaciones.push(fechaIngresada)
+
+                    let nuevoElementoDetalle = {
+                        vacuna: new mongoose.mongo.ObjectId(req.params.idVacuna),
+                        cantidadAplicada: 1,
+                        aplicaciones: nuevasAplicaciones,
+                        registradoPor: new mongoose.mongo.ObjectId(req.session.datos.id)
+                    }
+                    nuevoDetallesVacunacion.push(nuevoElementoDetalle)
+
+                }
+                else{
+
+                    let ultimaFecha = new Date(elemento.aplicaciones[elemento.aplicaciones.length-1])
+
+                    if (fechaIngresada.getTime() < ultimaFecha.getTime() || fechaIngresada.getTime() > fechaActual.getTime()){
+                        return res.json({error: true, mensaje: "No sé puede aplicar una vacuna en esta fecha"})
+                    }
+                    else{
+
+                        let nuevasAplicaciones = elemento.aplicaciones
+                        nuevasAplicaciones.push(fechaIngresada)
+
+                        let nuevoElementoDetalle = {
+                            vacuna: new mongoose.mongo.ObjectId(req.params.idVacuna),
+                            cantidadAplicada: Number(elemento.cantidadAplicada) + 1,
+                            aplicaciones: nuevasAplicaciones,
+                            registradoPor: new mongoose.mongo.ObjectId(req.session.datos.id)
+                        }
+
+                        nuevoDetallesVacunacion.push(nuevoElementoDetalle)
+
+                    }
+                }
+            }
+            else{
+                nuevoDetallesVacunacion.push(elemento)
+            }
+        }
+        Empleado.findByIdAndUpdate(req.params.idEmpleado,{$set: {detallesVacunacion: nuevoDetallesVacunacion}},{new:true})
+        .then(empleadoActualizado =>{
+            res.json({error: false, mensaje: "Vacuna aplicada con exito", datos: empleadoActualizado})
+        })
+        .catch(err =>{
+            res.json({error: true, mensaje: "No se pudo aplicar la vacuna", datos: err})
+        })
+    })
+    .catch(err =>{
+        res.json({error: true, mensaje: "Empleado no encontrado", datos: err})
+    })
+})
+
+
+//Actualizar Vacuna empleado
+router.put("/:idEmpleado/vacunas/:idVacuna", (req,res) =>{
+
+    Empleado.findById(req.params.idEmpleado).
+    populate("detallesVacunacion.vacuna")
+    .then(trabajador =>{
+
+        let nuevoDetallesVacunacion = []
+        for (elemento of trabajador.detallesVacunacion){
+
+            let fechaActual = new Date();        
+            let fechaIngresada = new Date(req.body.fechaAplicacion)
+
+            if (elemento.vacuna._id == req.params.idVacuna){
+
+                let ultimaFecha = new Date(elemento.aplicaciones[elemento.aplicaciones.length-1])
+
+                if (fechaIngresada.getTime() < ultimaFecha.getTime() || fechaIngresada.getTime() > fechaActual.getTime()){
+                    return res.json({error: true, mensaje: "No sé puede modificar la fecha de la vacuna ya que no esta en el rango permitido"})
+                }
+                else{
+
+                    let nuevasAplicaciones = elemento.aplicaciones
+                    nuevasAplicaciones.pop()
+                    nuevasAplicaciones.push(fechaIngresada)
+
+                    let nuevoElementoDetalle = {
+                        vacuna: new mongoose.mongo.ObjectId(req.params.idVacuna),
+                        cantidadAplicada: Number(elemento.cantidadAplicada) + 1,
+                        aplicaciones: nuevasAplicaciones,
+                        registradoPor: new mongoose.mongo.ObjectId(req.session.datos.id)
+                    }
+
+                    nuevoDetallesVacunacion.push(nuevoElementoDetalle)
+
+                }
+
+            }
+            else{
+                nuevoDetallesVacunacion.push(elemento)
+            }
+        }
+        Empleado.findByIdAndUpdate(req.params.idEmpleado,{$set: {detallesVacunacion: nuevoDetallesVacunacion}},{new:true})
+        .then(empleadoActualizado =>{
+            res.json({error: false, mensaje: "Vacuna actualizada con exito", datos: empleadoActualizado})
+        })
+        .catch(err =>{
+            res.json({error: true, mensaje: "No se pudo actualizar la vacuna", datos: err})
+        })
+    })
+    .catch(err =>{
+        res.json({error: true, mensaje: "Empleado no encontrado", datos: err})
+    })
+})
+
+
+//Eliminar Vacuna empleado
+router.delete("/:idEmpleado/vacunas/:idVacuna", (req,res) =>{
+
+    Empleado.findById(req.params.idEmpleado).
+    populate("detallesVacunacion.vacuna")
+    .then(trabajador =>{
+
+        let nuevoDetallesVacunacion = []
+        for (elemento of trabajador.detallesVacunacion){
+
+            if (elemento.vacuna._id == req.params.idVacuna){
+
+                let nuevasAplicaciones = elemento.aplicaciones
+                nuevasAplicaciones.pop()
+
+                let nuevoElementoDetalle = {
+                    vacuna: new mongoose.mongo.ObjectId(req.params.idVacuna),
+                    cantidadAplicada: Number(elemento.cantidadAplicada) - 1,
+                    aplicaciones: nuevasAplicaciones,
+                    registradoPor: new mongoose.mongo.ObjectId(req.session.datos.id)
+                }
+
+                nuevoDetallesVacunacion.push(nuevoElementoDetalle)
+
+            }
+            else{
+                nuevoDetallesVacunacion.push(elemento)
+            }
+        }
+        Empleado.findByIdAndUpdate(req.params.idEmpleado,{$set: {detallesVacunacion: nuevoDetallesVacunacion}},{new:true})
+        .then(empleadoActualizado =>{
+            res.json({error: false, mensaje: "Vacuna eliminada con exito", datos: empleadoActualizado})
+        })
+        .catch(err =>{
+            res.json({error: true, mensaje: "No se pudo eliminar la vacuna", datos: err})
+        })
+    })
+    .catch(err =>{
+        res.json({error: true, mensaje: "Empleado no encontrado", datos: err})
+    })
+
+})
 
 
 module.exports = router;
