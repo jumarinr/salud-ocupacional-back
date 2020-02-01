@@ -59,4 +59,20 @@ router.post("/", (req,res)=>{
     })
 })
 
+router.put("/:id", (req, res) => {
+
+    Vacuna.findByIdAndUpdate(req.params.id, 
+        {$set: {nombre: req.body.nombre,
+                descripcion: req.body.descripcion,
+                periodicidad: req.body.periodicidad,
+                cantidadAplicar: req.body.cantidadAplicar,
+                prestadorServicio: req.body.prestadorServicio}}, {new: true})
+        .then(vacunaActualizada => {
+            res.json({error: false, mensaje: "Se actualizó la información de la vacuna con éxito", datos: vacunaActualizada})
+        })
+        .catch(err => {
+            res.json({error: true, mensaje: "Error al actualizar la información de la vacuna", datos: err})
+        })
+})
+
 module.exports = router;
