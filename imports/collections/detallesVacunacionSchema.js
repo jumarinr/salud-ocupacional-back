@@ -13,10 +13,15 @@ const detallesVacunacionSchema = new mongoose.Schema({
         type: Number, 
         default: 0  
     },
+    aplicaciones: {
+        type: [Date],
+        default: []
+    },
     registradoPor:{
         type: mongoose.Schema.Types.ObjectId,
         default: null 
     }
 })
 
-module.exports = detallesVacunacionSchema
+// Con el esquema "schema" puedo identificar a los tipos de dato u objetos "detallesVacunacionSchema", mientras que con el modelo "model", puedo crear estos objetos
+module.exports = {"schema":detallesVacunacionSchema,"model":mongoose.model("DetalleVacunacion", detallesVacunacionSchema)}
