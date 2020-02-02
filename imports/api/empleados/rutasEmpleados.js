@@ -197,8 +197,17 @@ router.post("/:idEmpleado/vacunas/:idVacuna", (req,res) =>{
 
                     let ultimaFecha = new Date(elemento.aplicaciones[elemento.aplicaciones.length-1])
 
-                    if (fechaIngresada.getTime() < ultimaFecha.getTime() || fechaIngresada.getTime() > fechaActual.getTime()){
-                        return res.json({error: true, mensaje: "No sé puede aplicar una vacuna en esta fecha"})
+                    if (fechaIngresada.getTime() < ultimaFecha.getTime()){
+                        return res.json({error: true, mensaje: "No se puede aplicar una vacuna en una fecha anterior a la ultima fecha de aplicación."})
+                    }
+                    else if (fechaIngresada.getTime() == ultimaFecha.getTime()){
+                        return res.json({error: true, mensaje: "No se puede aplicar una vacuna en una fecha igual a la ultima fecha de aplicación."})
+                    }
+                    else if (fechaIngresada.getTime() == fechaActual.getTime()){
+                        return res.json({error: true, mensaje: "No se puede aplicar una vacuna en una fecha igual a la fecha actual (Exactamente a la misma hora del dia)."})
+                    }
+                    else if (fechaIngresada.getTime() > fechaActual.getTime()){
+                        return res.json({error: true, mensaje: "No se puede aplicar una vacuna en una fecha posterior al dia de hoy."})
                     }
                     else{
 
@@ -250,28 +259,52 @@ router.put("/:idEmpleado/vacunas/:idVacuna", (req,res) =>{
 
             if (elemento.vacuna._id == req.params.idVacuna){
 
-                let ultimaFecha = new Date(elemento.aplicaciones[elemento.aplicaciones.length-1])
+                if (elemento.aplicaciones.length == 1){
 
-                if (fechaIngresada.getTime() < ultimaFecha.getTime() || fechaIngresada.getTime() > fechaActual.getTime()){
-                    return res.json({error: true, mensaje: "No sé puede modificar la fecha de la vacuna ya que no esta en el rango permitido"})
-                }
-                else{
-
-                    let nuevasAplicaciones = elemento.aplicaciones
-                    nuevasAplicaciones.pop()
-                    nuevasAplicaciones.push(fechaIngresada)
-
-                    let nuevoElementoDetalle = {
-                        vacuna: new mongoose.mongo.ObjectId(req.params.idVacuna),
-                        cantidadAplicada: Number(elemento.cantidadAplicada) + 1,
-                        aplicaciones: nuevasAplicaciones,
-                        registradoPor: new mongoose.mongo.ObjectId(req.session.datos.id)
+                    if (fechaIngresada.getTime() > fechaActual.getTime()){
+                        return res.json({error: true, mensaje: "No sé puede modificar la ultima fecha de aplicacion a una fecha posterior a la fecha actual."})
                     }
+                    else{
+                        let nuevasAplicaciones = elemento.aplicaciones
+                        nuevasAplicaciones.pop()
+                        nuevasAplicaciones.push(fechaIngresada)
 
-                    nuevoDetallesVacunacion.push(nuevoElementoDetalle)
+                        let nuevoElementoDetalle = {
+                            vacuna: new mongoose.mongo.ObjectId(req.params.idVacuna),
+                            cantidadAplicada: Number(elemento.cantidadAplicada),
+                            aplicaciones: nuevasAplicaciones,
+                            registradoPor: new mongoose.mongo.ObjectId(req.session.datos.id)
+                        }
 
+                        nuevoDetallesVacunacion.push(nuevoElementoDetalle)
+                    }
                 }
 
+                else{
+                    let penultimaFecha = new Date(elemento.aplicaciones[elemento.aplicaciones.length-1])
+
+                    if (fechaIngresada.getTime() < penultimaFecha.getTime()){
+                        return res.json({error: true, mensaje: "No sé puede modificar la ultima fecha de aplicacion a una fecha anterior a la penultima fecha de aplicacion."})
+                    }
+                    else if (fechaIngresada.getTime() > fechaActual.getTime()){
+                        return res.json({error: true, mensaje: "No sé puede modificar la ultima fecha de aplicacion a una fecha posterior a la fecha actual."})
+                    }
+                    else{
+
+                        let nuevasAplicaciones = elemento.aplicaciones
+                        nuevasAplicaciones.pop()
+                        nuevasAplicaciones.push(fechaIngresada)
+
+                        let nuevoElementoDetalle = {
+                            vacuna: new mongoose.mongo.ObjectId(req.params.idVacuna),
+                            cantidadAplicada: Number(elemento.cantidadAplicada),
+                            aplicaciones: nuevasAplicaciones,
+                            registradoPor: new mongoose.mongo.ObjectId(req.session.datos.id)
+                        }
+
+                        nuevoDetallesVacunacion.push(nuevoElementoDetalle)
+                    }
+                }
             }
             else{
                 nuevoDetallesVacunacion.push(elemento)
