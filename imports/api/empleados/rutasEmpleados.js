@@ -313,14 +313,14 @@ router.put("/:idEmpleado/vacunas/:idVacuna", (req,res) =>{
         }
         Empleado.findByIdAndUpdate(req.params.idEmpleado,{$set: {detallesVacunacion: nuevoDetallesVacunacion}},{new:true})
         .then(empleadoActualizado =>{
-            res.json({error: false, mensaje: "Vacuna actualizada con exito", datos: empleadoActualizado})
+            res.json({error: false, mensaje: "Aplicacion de la vacuna actualizada con exito.", datos: empleadoActualizado})
         })
         .catch(err =>{
-            res.json({error: true, mensaje: "No se pudo actualizar la vacuna", datos: err})
+            res.json({error: true, mensaje: "No se pudo actualizar la Aplicacion de la vacuna.", datos: err})
         })
     })
     .catch(err =>{
-        res.json({error: true, mensaje: "Empleado no encontrado", datos: err})
+        res.json({error: true, mensaje: "Empleado no encontrado.", datos: err})
     })
 })
 
@@ -356,14 +356,14 @@ router.delete("/:idEmpleado/vacunas/:idVacuna", (req,res) =>{
         }
         Empleado.findByIdAndUpdate(req.params.idEmpleado,{$set: {detallesVacunacion: nuevoDetallesVacunacion}},{new:true})
         .then(empleadoActualizado =>{
-            res.json({error: false, mensaje: "Vacuna eliminada con exito", datos: empleadoActualizado})
+            res.json({error: false, mensaje: "Aplicacion de la vacuna eliminada con exito.", datos: empleadoActualizado})
         })
         .catch(err =>{
-            res.json({error: true, mensaje: "No se pudo eliminar la vacuna", datos: err})
+            res.json({error: true, mensaje: "No se pudo eliminar la aplicacion de la vacuna.", datos: err})
         })
     })
     .catch(err =>{
-        res.json({error: true, mensaje: "Empleado no encontrado", datos: err})
+        res.json({error: true, mensaje: "Empleado no encontrado.", datos: err})
     })
 
 })
