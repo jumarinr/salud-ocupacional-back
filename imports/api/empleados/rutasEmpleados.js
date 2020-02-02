@@ -281,7 +281,7 @@ router.put("/:idEmpleado/vacunas/:idVacuna", (req,res) =>{
                 }
 
                 else{
-                    let penultimaFecha = new Date(elemento.aplicaciones[elemento.aplicaciones.length-1])
+                    let penultimaFecha = new Date(elemento.aplicaciones[elemento.aplicaciones.length-2])
 
                     if (fechaIngresada.getTime() < penultimaFecha.getTime()){
                         return res.json({error: true, mensaje: "No sé puede modificar la ultima fecha de aplicacion a una fecha anterior a la penultima fecha de aplicacion."})
