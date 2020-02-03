@@ -75,4 +75,21 @@ router.put("/:id", (req, res) => {
         })
 })
 
+router.delete('/:idVacuna', (req, res) => {
+
+    Vacuna.findById(req.params.idVacuna)
+        .then(vacunaEncontrada => {
+            vacunaEncontrada.remove()   // Cuando se hace vacuna.remove(), se ejecuta el middleware vacunaSchema.pre() en vacunaSchema.js
+            .then(vacunaRemovida => {
+                res.json({error: false, mensaje: "Vacuna removida con éxito", datos: vacunaRemovida});
+            })
+            .catch(err => {
+                res.json({error: true, mensaje: "Error al remover la vacuna", datos: err});
+            })
+        })
+        .catch(err => {
+            res.json({error: true, mensaje: "La vacuna no fue encontrada", datos: err});
+        })        
+});
+
 module.exports = router;
