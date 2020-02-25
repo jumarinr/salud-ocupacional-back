@@ -113,37 +113,46 @@ router.put("/:id", (req,res) =>{
     let detallesVacunasGuar  = funcPromesasVacunas(req.body.detallesVacunacion);
 
     detallesVacunasGuar.then(arregloRetornado =>{
+        Empleado.findById(req.params.id).then(empleadoRetornado => {
+            let arregloDetallesVacunacion = []
 
-        let arregloDetallesVacunacion = []
+            for (idVacuna of arregloRetornado){
+                if (empleadoRetornado.detallesVacunacion.filter(detalle => detalle.vacuna.toString() == idVacuna._id.toString()).length == 0) {
+                    // Si el usuario no tenía la vacuna previamente registrada, se crea un nuevo detalle de vacunación
+                    arregloDetallesVacunacion.push({
+                        vacuna: new mongoose.mongo.ObjectId(idVacuna._id),
+                        cantidadAplicada: 0, // Por ahora es cero(según la historia de usuario), en un futuro se debe mandar por el request.
+                        aplicaciones: [],
+                        registradoPor: new mongoose.mongo.ObjectId(req.session.datos.id)
+                    })
+                } else {
+                    // Si el usuario tenía la vacuna previamente registrada, se almacena el mismo detalle de vacunación
+                    arregloDetallesVacunacion.push(empleadoRetornado.detallesVacunacion.filter(detalle => detalle.vacuna.toString() == idVacuna._id.toString())[0])
+                }
+            }
 
-        for (idVacuna of arregloRetornado){
-            arregloDetallesVacunacion.push({
-            vacuna: new mongoose.mongo.ObjectId(idVacuna._id),
-            cantidadAplicada: 0, // Por ahora es cero(según la historia de usuario), en un futuro se debe mandar por el request.
-            aplicaciones: [],
-            registradoPor: new mongoose.mongo.ObjectId(req.session.datos.id)
+            Empleado.findByIdAndUpdate(req.params.id,
+                {$set: {tipoIdentificacion: req.body.tipoDocumento,
+                        identificacion : req.body.documento,
+                        correo : req.body.correo,
+                        nombres : req.body.nombres,
+                        apellidos : req.body.apellidos,
+                        fechaNacimiento : req.body.fechaNacimiento,
+                        direccion : req.body.direccion,
+                        telefono : req.body.telefono,
+                        celular : req.body.celular,
+                        contactoAllegado : req.body.telefonoFamiliar,
+                        nivelRiesgoLaboral : req.body.nivelRiesgo,
+                        areaTrabajo : area,
+                        detallesVacunacion : arregloDetallesVacunacion}},{new:true})
+            .then(empleadoActualizado =>{
+                res.json({error: false, mensaje: "Se actualizo la informacion del empleado con exito", datos: empleadoActualizado})
             })
-        }
-
-        Empleado.findByIdAndUpdate(req.params.id,
-            {$set: {tipoIdentificacion: req.body.tipoDocumento,
-                    identificacion : req.body.documento,
-                    correo : req.body.correo,
-                    nombres : req.body.nombres,
-                    apellidos : req.body.apellidos,
-                    fechaNacimiento : req.body.fechaNacimiento,
-                    direccion : req.body.direccion,
-                    telefono : req.body.telefono,
-                    celular : req.body.celular,
-                    contactoAllegado : req.body.telefonoFamiliar,
-                    nivelRiesgoLaboral : req.body.nivelRiesgo,
-                    areaTrabajo : area,
-                    detallesVacunacion : arregloDetallesVacunacion}},{new:true})
-        .then(empleadoActualizado =>{
-            res.json({error: false, mensaje: "Se actualizo la informacion del empleado con exito", datos: empleadoActualizado})
-        })
-        .catch(err =>{
-            res.json({error: true, mensaje: "Error al actualizar la informacion del empleado", datos: err})
+            .catch(err =>{
+                res.json({error: true, mensaje: "Error al actualizar la informacion del empleado", datos: err})
+            })
+        }).catch(err => {
+            res.json({error: true, mensaje: "Empleado no encontrado", datos: err})
         })
     })
     .catch(err =>{
