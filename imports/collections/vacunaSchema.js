@@ -23,6 +23,9 @@ const vacunaSchema = new mongoose.Schema({
         type: Number, 
         required: true
     },
+    precio:{
+        type: Number
+    },
     prestadorServicio: {
         type: String, 
         require: true

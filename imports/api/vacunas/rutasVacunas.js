@@ -39,6 +39,7 @@ router.post("/", (req,res)=>{
         descripcion: req.body.descripcion,
         periodicidad: req.body.periodicidad,
         cantidadAplicar: req.body.cantidadAplicar,
+        precio: req.body.precio,
         prestadorServicio : req.body.prestadorServicio
     });
 
@@ -66,6 +67,7 @@ router.put("/:id", (req, res) => {
                 descripcion: req.body.descripcion,
                 periodicidad: req.body.periodicidad,
                 cantidadAplicar: req.body.cantidadAplicar,
+                precio: req.body.precio,
                 prestadorServicio: req.body.prestadorServicio}}, {new: true})
         .then(vacunaActualizada => {
             res.json({error: false, mensaje: "Se actualizó la información de la vacuna con éxito", datos: vacunaActualizada})
