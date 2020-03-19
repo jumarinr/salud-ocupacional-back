@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const aplicacionesSchema = require("./aplicacionesSchema.js").schema
 
 const detallesVacunacionSchema = new mongoose.Schema({
     vacuna:{ 
@@ -14,7 +15,7 @@ const detallesVacunacionSchema = new mongoose.Schema({
         default: 0  
     },
     aplicaciones: {
-        type: [Date],
+        type: [aplicacionesSchema],
         default: []
     },
     registradoPor:{
