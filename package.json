@@ -22,10 +22,10 @@
   },
   "homepage": "https://github.com/jumarinr/salud-ocupacional-back#readme",
   "dependencies": {
-    "body-parser": "^1.19.0",
+    "body-parser": "^1.20.1",
     "connect-mongo": "^3.1.2",
     "cors": "^2.8.5",
-    "express": "^4.17.1",
+    "express": "^4.18.2",
     "express-session": "^1.17.0",
     "mongoose": "^5.7.4",
     "nodemon": "^1.19.3"
